@@ -5,7 +5,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="google-signin-client_id" content="486393496841-k0pbvvb84kgmqepr1grvs1mk61maigh9.apps.googleusercontent.com.apps.googleusercontent.com">
+	<meta name="google-signin-scope" content="profile email">
+	
     <title>Conference Central</title>
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -18,7 +20,7 @@
     <meta property="og:description" content="Conference Central web app that lets you manage conferences.">
     <meta property="og:image" content="/img/CloudPlatform_logo.png">
     <meta property="og:site_name" content="An web app powered by Google App Engine">
-
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
     <script>
@@ -32,6 +34,8 @@
                 angular.bootstrap(document, ['conferenceApp']);
             });
         };
+        
+    
     </script>
     <script src="//apis.google.com/js/client:plusone.js?onload=init"></script>
 </head>

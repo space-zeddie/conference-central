@@ -86,7 +86,7 @@ app.constant('HTTP_ERRORS', {
  */
 app.factory('oauth2Provider', function ($modal) {
     var oauth2Provider = {
-        CLIENT_ID: 'replace with your client id',
+        CLIENT_ID: '486393496841-k0pbvvb84kgmqepr1grvs1mk61maigh9.apps.googleusercontent.com.apps.googleusercontent.com',
         SCOPES: 'https://www.googleapis.com/auth/userinfo.email profile',
         signedIn: false
     };
@@ -105,7 +105,7 @@ app.factory('oauth2Provider', function ($modal) {
         });
     };
 
-    /**
+    /**	
      * Logs out the user.
      */
     oauth2Provider.signOut = function () {
