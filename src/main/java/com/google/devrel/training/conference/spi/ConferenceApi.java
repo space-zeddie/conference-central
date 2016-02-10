@@ -59,12 +59,12 @@ public class ConferenceApi {
         // TODO 1
         // Set the teeShirtSize to the value sent by the ProfileForm, if sent
         // otherwise leave it as the default value
-        teeShirtSize = pf.getTeeShirtSize() != null ? pf.getTeeShirtSize() : TeeShirtSize.NOT_SPECIFIED;
+        if (pf != null) teeShirtSize = pf.getTeeShirtSize() != null ? pf.getTeeShirtSize() : TeeShirtSize.NOT_SPECIFIED;
 
         // TODO 1
         // Set the displayName to the value sent by the ProfileForm, if sent
         // otherwise set it to null
-        displayName = pf.getDisplayName();
+        if (pf != null) displayName = pf.getDisplayName();
 
         // TODO 2
         // Get the userId and mainEmail
