@@ -59,7 +59,7 @@ public class ConferenceApi {
         userId = user.getUserId();
         mainEmail = user.getEmail();
 
-        if (user.getEmail() != null && (displayName == null || displayName.equals("Your Name Here")))
+        if (user.getEmail() != null && (displayName == null /*|| displayName.equals("Your Name Here")*/))
         	displayName = extractDefaultDisplayNameFromEmail(mainEmail);
 
         Profile profile = getProfile(user);
