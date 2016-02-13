@@ -45,7 +45,7 @@ public class ConferenceApi {
     @ApiMethod(name = "saveProfile", path = "profile", httpMethod = HttpMethod.POST)
     // The request that invokes this method should provide data that
     // conforms to the fields defined in ProfileForm
-    public Profile saveProfile(ProfileForm pf, User user) throws UnauthorizedException {
+    public Profile saveProfile(User user, ProfileForm pf) throws UnauthorizedException {
 
         String userId = null;
         String mainEmail = null;
