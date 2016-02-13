@@ -49,32 +49,18 @@ public class ConferenceApi {
 
         String userId = null;
         String mainEmail = null;
-        String displayName = "Your name will go here";
+        String displayName = "Your Name Here";
         TeeShirtSize teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
 
-        // TODO 2
-        // If the user is not logged in, throw an UnauthorizedException
         if (user == null) throw new UnauthorizedException("You have not logged in.");
- 
-        // TODO 1
-        // Set the teeShirtSize to the value sent by the ProfileForm, if sent
-        // otherwise leave it as the default value
         if (pf != null) teeShirtSize = pf.getTeeShirtSize() != null ? pf.getTeeShirtSize() : TeeShirtSize.NOT_SPECIFIED;
+        if (pf != null && pf.getDisplayName() != null) displayName = pf.getDisplayName();
 
-        // TODO 1
-        // Set the displayName to the value sent by the ProfileForm, if sent
-        // otherwise set it to null
-        if (pf != null) displayName = pf.getDisplayName();
-
-        // TODO 2
-        // Get the userId and mainEmail
         userId = user.getUserId();
         mainEmail = user.getEmail();
 
-        // TODO 2
-        // If the displayName is null, set it to default value based on the user's email
-        // by calling extractDefaultDisplayNameFromEmail(...)
-        if (displayName == null) displayName = extractDefaultDisplayNameFromEmail(mainEmail);
+        if (user.getEmail() != null && (displayName == null || displayName.equals("Your Name Here")))
+        	displayName = extractDefaultDisplayNameFromEmail(mainEmail);
 
         Profile profile = getProfile(user);
         if (profile == null)
