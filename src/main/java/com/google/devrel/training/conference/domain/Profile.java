@@ -25,7 +25,7 @@ public class Profile {
     	this.userId = userId;
     	this.displayName = displayName;
     	this.mainEmail = mainEmail;
-    	this.teeShirtSize = teeShirtSize;
+    	this.teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
     }
     
 	public String getDisplayName() {
