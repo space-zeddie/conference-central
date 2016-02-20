@@ -15,6 +15,7 @@ import com.google.devrel.training.conference.Constants;
 import com.google.devrel.training.conference.domain.Conference;
 import com.google.devrel.training.conference.domain.Profile;
 import com.google.devrel.training.conference.form.ConferenceForm;
+import com.google.devrel.training.conference.form.ConferenceQueryForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.Key;
@@ -155,9 +156,9 @@ public class ConferenceApi {
             path = "queryConferences",
             httpMethod = HttpMethod.POST
     )
-    public List<Conference> queryConferences() {
-        Query query = ofy().load().type(Conference.class).order("name");
-        return query.list();
+    public List<Conference> queryConferences(ConferenceQueryForm conferenceQueryForm) 
+    {
+    	return conferenceQueryForm.getQuery().list();
     }
     
     @ApiMethod(
