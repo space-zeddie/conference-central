@@ -183,4 +183,17 @@ public class ConferenceApi {
     	}
     	return created;
     }
+    
+    @ApiMethod(
+            name = "getConferencesFiltered",
+            path = "getConferencesFiltered",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Conference> getConferencesFiltered()
+    {
+    	Query query = ofy().load().type(Conference.class);
+        query = query.filter("city =", "London");
+        query = query.filter("topics =", "Web Technologies");
+        return query.list();
+    }
 }
