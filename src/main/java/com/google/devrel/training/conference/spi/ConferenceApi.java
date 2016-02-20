@@ -168,10 +168,7 @@ public class ConferenceApi {
     )
     public List<Conference> getConferencesCreated(final User user) throws UnauthorizedException
     {
-    	if (user == null) 
-    	{
-            throw new UnauthorizedException("Authorization required");
-        }
+    	Query query = ofy().load().type(Conference.class).ancestor(user).order("name");
     	Profile profile = getProfileFromUser(user);
     	List<Conference> created = new ArrayList<Conference>(0);
     	if (profile != null)
