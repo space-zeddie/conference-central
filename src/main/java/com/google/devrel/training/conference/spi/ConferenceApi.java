@@ -169,16 +169,7 @@ public class ConferenceApi {
     public List<Conference> getConferencesCreated(final User user) throws UnauthorizedException
     {
     	Query query = ofy().load().type(Conference.class).ancestor(user).order("name");
-    	Profile profile = getProfileFromUser(user);
-    	List<Conference> created = new ArrayList<Conference>(0);
-    	if (profile != null)
-    	{
-    		for (String key : profile.getCreatedConferenceKeys())
-        	{
-        		created.add(ofy().load().key(Key.create(Conference.class, key)).now());
-        	}
-    	}
-    	return created;
+    	return query.list();
     }
     
     @ApiMethod(
