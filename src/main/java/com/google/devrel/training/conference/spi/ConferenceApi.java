@@ -133,39 +133,18 @@ public class ConferenceApi {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
+        String userId = user.getUserId();
 
-        // TODO (Lesson 4)
-        // Get the userId of the logged in User
-       // String userId = 
+        Key<Profile> profileKey =  Key.create(Profile.class, user.getUserId());
+        final Key<Conference> conferenceKey = factory().allocateId(profileKey, Conference.class);
 
-        // TODO (Lesson 4)
-        // Get the key for the User's Profile
-        //Key<Profile> profileKey = 
+        final long conferenceId = conferenceKey.getId();
+        Profile profile = getProfileFromUser(user);
+        Conference conference = ofy().load().key(Key.create(profileKey, Conference.class, conferenceId)).now();
 
-        // TODO (Lesson 4)
-        // Allocate a key for the conference -- let App Engine allocate the ID
-        // Don't forget to include the parent Profile in the allocated ID
-        //final Key<Conference> conferenceKey = 
+        ofy().save().entities(profile, conference).now();
 
-        // TODO (Lesson 4)
-        // Get the Conference Id from the Key
-        //final long conferenceId = 
-
-        // TODO (Lesson 4)
-        // Get the existing Profile entity for the current user if there is one
-        // Otherwise create a new Profile entity with default values
-        //Profile profile = 
-
-        // TODO (Lesson 4)
-        // Create a new Conference Entity, specifying the user's Profile entity
-        // as the parent of the conference
-        //Conference conference = 
-
-        // TODO (Lesson 4)
-        // Save Conference and Profile Entities
-         
-
-         return null;//conference;
+        return conference;
     }
 
     
