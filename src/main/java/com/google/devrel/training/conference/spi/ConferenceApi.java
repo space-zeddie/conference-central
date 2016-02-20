@@ -273,8 +273,7 @@ public class ConferenceApi {
             httpMethod = HttpMethod.POST
     )
 
-    public WrappedBoolean registerForConference(final User user,
-            @Named("websafeConferenceKey") final String websafeConferenceKey)
+    public WrappedBoolean registerForConference(final User user, @Named("websafeConferenceKey") final String websafeConferenceKey)
             throws UnauthorizedException, NotFoundException,
             ForbiddenException, ConflictException {
         // If not signed in, throw a 401 error.
@@ -285,8 +284,6 @@ public class ConferenceApi {
         // Get the userId
         final String userId = user.getUserId();
 
-        // TODO
-        // Start transaction
         WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>()
         {
         	public WrappedBoolean run()
@@ -373,5 +370,60 @@ public class ConferenceApi {
 			attending.add(ofy().load().key(key).now());
 		}
 		return attending;
+	}
+	
+	/**     
+	* Unregister from the specified Conference.     *     
+	* @param user An user who invokes this method, null when the user is not signed in.     
+	* @param websafeConferenceKey The String representation of the Conference Key to unregister  from.     
+	* @return Boolean true when success, otherwise false.     
+	* @throws UnauthorizedException when the user is not signed in.     
+	* @throws NotFoundException when there is no Conference with the given conferenceId.     
+	*/   
+	@ApiMethod( 
+			name = "unregisterFromConference", 
+			path = "conference/{websafeConferenceKey}/registration",
+			httpMethod = HttpMethod.DELETE)    
+	public WrappedBoolean unregisterFromConference(final User user, @Named("websafeConferenceKey") final String websafeConferenceKey)
+			throws UnauthorizedException, NotFoundException, ForbiddenException, ConflictException
+	{
+		// If not signed in, throw a 401 error.
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+
+        // Get the userId
+        final String userId = user.getUserId();
+
+        WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>()
+        {
+        	public WrappedBoolean run()
+        	{
+        		try
+        		{
+        			Key<Conference> conferenceKey = Key.create(websafeConferenceKey);
+                	Conference conference = ofy().load().key(conferenceKey).now();
+                	// 404 when there is no Conference with the given conferenceId.
+                	if (conference == null) {
+                		return new WrappedBoolean (false, "No Conference found with key: " + websafeConferenceKey);
+                	}
+                	Profile profile = getProfileFromUser(user);
+                	// Has the user already registered to attend this conference?
+                	if (!profile.getConferenceKeysToAttend().contains(websafeConferenceKey)) {
+                		return new WrappedBoolean (false, "Not Attending this Conference");
+                	} else {
+                		profile.unregisterFromConference(websafeConferenceKey);
+                		conference.giveBackSeats(1);
+                		ofy().save().entities(profile, conference).now();
+                        // We are booked!
+                		return new WrappedBoolean(true, "Unregistration successful");
+                   }
+        		} catch (Exception e) {
+        			return new WrappedBoolean(false, "Unknown exception");
+        		}
+
+            }        		
+        });
+		return result;
 	}
 }
