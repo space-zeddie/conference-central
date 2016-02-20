@@ -1,5 +1,6 @@
 package com.google.devrel.training.conference.spi;
 
+import static com.google.devrel.training.conference.service.OfyService.factory;
 import static com.google.devrel.training.conference.service.OfyService.ofy;
 
 import com.google.api.server.spi.config.Api;
@@ -8,7 +9,9 @@ import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.google.devrel.training.conference.Constants;
+import com.google.devrel.training.conference.domain.Conference;
 import com.google.devrel.training.conference.domain.Profile;
+import com.google.devrel.training.conference.form.ConferenceForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.Key;
@@ -92,5 +95,23 @@ public class ConferenceApi {
         Key<Profile> key = Key.create(Profile.class, userId);
         Profile profile = ofy().load().key(key).now();
         return profile;
+    }
+    
+    // TO DO
+    public Profile getProfileFromUser(User user, ProfileForm pf)
+    {
+    	return new Profile(user.getUserId(), pf.getDisplayName(), user.getEmail(), pf.getTeeShirtSize());
+    }
+    
+    // TO DO
+    public Conference createConference(User user, ProfileForm pf, ConferenceForm form)
+    {
+    	Profile profile = getProfileFromUser(user, pf);
+    	String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+        Key<Conference> key = factory().allocateId(profileKey, Conference.class);
+        Conference conf = new Conference(key.getId(), userId, form);
+        ofy().save().entities(profile, conf);
+    	return conf;
     }
 }
