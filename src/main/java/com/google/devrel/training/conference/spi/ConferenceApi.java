@@ -26,6 +26,7 @@ import com.google.devrel.training.conference.form.ConferenceQueryForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Work;
 
 /**
  * Defines conference APIs.
@@ -272,7 +273,7 @@ public class ConferenceApi {
             httpMethod = HttpMethod.POST
     )
 
-    public WrappedBoolean registerForConference_SKELETON(final User user,
+    public WrappedBoolean registerForConference(final User user,
             @Named("websafeConferenceKey") final String websafeConferenceKey)
             throws UnauthorizedException, NotFoundException,
             ForbiddenException, ConflictException {
@@ -286,7 +287,41 @@ public class ConferenceApi {
 
         // TODO
         // Start transaction
-        WrappedBoolean result = null;
+        WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>()
+        {
+        	public WrappedBoolean run()
+        	{
+                try {
+                	Key<Conference> conferenceKey = Key.create(websafeConferenceKey);
+                	// TODO
+                	// Get the Conference entity from the datastore
+                	Conference conference = ofy().load().key(conferenceKey).now();
+                	// 404 when there is no Conference with the given conferenceId.
+                	if (conference == null) {
+                		return new WrappedBoolean (false, "No Conference found with key: " + websafeConferenceKey);
+                	}
+                	// TODO
+                	// Get the user's Profile entity
+                	Profile profile = getProfileFromUser(user);
+                	// Has the user already registered to attend this conference?
+                	if (profile.getConferenceKeysToAttend().contains(websafeConferenceKey)) {
+                		return new WrappedBoolean (false, "Already registered");
+                	} else if (conference.getSeatsAvailable() <= 0) {
+                		return new WrappedBoolean (false, "No seats available");
+                	} else {
+                		// All looks good, go ahead and book the seat
+                		profile.addToConferenceKeysToAttend(websafeConferenceKey);
+                		conference.bookSeats(1);
+                		ofy().save().entities(profile, conference).now();
+                        // We are booked!
+                		return new WrappedBoolean(true, "Registration successful");
+                   }
+
+                } catch (Exception e) {
+                	return new WrappedBoolean(false, "Unknown exception");
+                }
+        	}
+        });
      // if result is false
     	if(!result.getResult())
     	{
@@ -307,44 +342,6 @@ public class ConferenceApi {
     			throw new ForbiddenException("Unknown exception");
     		}
 		}
-        try {
-        	// TODO
-        	// Get the conference key -- you can get it from websafeConferenceKey
-        	// Will throw ForbiddenException if the key cannot be created
-        	Key<Conference> conferenceKey = null;
-        	// TODO
-        	// Get the Conference entity from the datastore
-        	Conference conference = null;
-        	// 404 when there is no Conference with the given conferenceId.
-        	if (conference == null) {
-        		return new WrappedBoolean (false, "No Conference found with key: " + websafeConferenceKey);
-        	}
-        	// TODO
-        	// Get the user's Profile entity
-        	Profile profile = null;
-        	// Has the user already registered to attend this conference?
-        	if (profile.getConferenceKeysToAttend().contains(websafeConferenceKey)) {
-        		return new WrappedBoolean (false, "Already registered");
-        	} else if (conference.getSeatsAvailable() <= 0) {
-        		return new WrappedBoolean (false, "No seats available");
-        	} else {
-        		// All looks good, go ahead and book the seat
-        		// TODO
-        		// Add the websafeConferenceKey to the profile's
-        		// conferencesToAttend property
-        		profile.addToConferenceKeysToAttend(websafeConferenceKey);               
-                // TODO 
-        		// Decrease the conference's seatsAvailable
-        		// You can use the bookSeats() method on Conference
-                // TODO
-        		// Save the Conference and Profile entities                   
-                // We are booked!
-        		return new WrappedBoolean(true, "Registration successful");
-           }
-
-        } catch (Exception e) {
-        	return new WrappedBoolean(false, "Unknown exception");
-        }
     }
 	/**
 	 * Returns a collection of Conference Object that the user is going to
