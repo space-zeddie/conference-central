@@ -3,6 +3,7 @@ package com.google.devrel.training.conference.spi;
 import static com.google.devrel.training.conference.service.OfyService.factory;
 import static com.google.devrel.training.conference.service.OfyService.ofy;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.googlecode.objectify.cmd.Query;
 import com.google.api.server.spi.config.Api;
@@ -140,6 +141,7 @@ public class ConferenceApi {
 
         final long conferenceId = conferenceKey.getId();
         Profile profile = getProfileFromUser(user);
+        profile.addToCreatedConferenceKeys(conferenceKey.toString());
         Conference conference = ofy().load().key(Key.create(profileKey, Conference.class, conferenceId)).now();
         if (conference == null)
         	conference = new Conference(conferenceId, userId, conferenceForm);
@@ -166,9 +168,19 @@ public class ConferenceApi {
     )
     public List<Conference> getConferencesCreated(final User user) throws UnauthorizedException
     {
-    	if (user == null) {
+    	if (user == null) 
+    	{
             throw new UnauthorizedException("Authorization required");
         }
-    	return null;
+    	Profile profile = getProfileFromUser(user);
+    	List<Conference> created = new ArrayList<Conference>(0);
+    	if (profile != null)
+    	{
+    		for (String key : profile.getCreatedConferenceKeys())
+        	{
+        		created.add(ofy().load().key(Key.create(Conference.class, key)).now());
+        	}
+    	}
+    	return created;
     }
 }

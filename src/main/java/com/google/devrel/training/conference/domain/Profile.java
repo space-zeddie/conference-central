@@ -16,6 +16,7 @@ public class Profile {
 	TeeShirtSize teeShirtSize;
 	// List of conferences the user has registered to attend
 	private List<String> conferenceKeysToAttend = new ArrayList<>(0);
+	private List<String> conferenceKeysCreated= new ArrayList<>(0);
 
 	@Id String userId;
     
@@ -58,12 +59,22 @@ public class Profile {
 
 	public List<String> getConferenceKeysToAttend() 
 	{
-	        return ImmutableList.copyOf(conferenceKeysToAttend);
+	    return ImmutableList.copyOf(conferenceKeysToAttend);
+	}
+	
+	public List<String> getCreatedConferenceKeys() 
+	{
+	    return ImmutableList.copyOf(conferenceKeysCreated);
 	}
 	    
 	public void addToConferenceKeysToAttend(String conferenceKey) 
 	{
-	        conferenceKeysToAttend.add(conferenceKey);
+	    conferenceKeysToAttend.add(conferenceKey);
+	}
+	
+	public void addToCreatedConferenceKeys(String conferenceKey) 
+	{
+		conferenceKeysCreated.add(conferenceKey);
 	}
 	    
 	/**
