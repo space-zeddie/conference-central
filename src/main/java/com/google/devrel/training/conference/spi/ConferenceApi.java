@@ -141,7 +141,6 @@ public class ConferenceApi {
 
         final long conferenceId = conferenceKey.getId();
         Profile profile = getProfileFromUser(user);
-        profile.addToCreatedConferenceKeys(conferenceKey.toString());
         Conference conference = ofy().load().key(Key.create(profileKey, Conference.class, conferenceId)).now();
         if (conference == null)
         	conference = new Conference(conferenceId, userId, conferenceForm);
@@ -168,8 +167,14 @@ public class ConferenceApi {
     )
     public List<Conference> getConferencesCreated(final User user) throws UnauthorizedException
     {
-    	Query query = ofy().load().type(Conference.class).ancestor(user).order("name");
-    	return query.list();
+    	if (user == null) throw new UnauthorizedException("Authorization required.");
+    	Profile profile = getProfileFromUser(user);
+    	if (profile != null) 
+    	{
+    		Query query = ofy().load().type(Conference.class).ancestor(profile);
+    		return query.list();
+    	}
+    	return new ArrayList<Conference>(0);
     }
     
     @ApiMethod(
