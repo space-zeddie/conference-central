@@ -342,6 +342,7 @@ public class ConferenceApi {
     			throw new ForbiddenException("Unknown exception");
     		}
 		}
+    	return result;
     }
 	/**
 	 * Returns a collection of Conference Object that the user is going to
@@ -361,22 +362,16 @@ public class ConferenceApi {
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
 		}
-		// TODO
-		// Get the Profile entity for the user
-		Profile profile = null; // Change this;
+		Profile profile = getProfileFromUser(user);
 		if (profile == null) {
 			throw new NotFoundException("Profile doesn't exist.");
 		}
-
-		// TODO
-		// Get the value of the profile's conferenceKeysToAttend property
-		List<String> keyStringsToAttend = null; // change this
-
-		// TODO
-		// Iterate over keyStringsToAttend,
-		// and return a Collection of the
-		// Conference entities that the user has registered to atend
-
-		return null; // change this
+		Collection<Conference> attending = new ArrayList<Conference>(0);
+		for (String websafe : profile.getConferenceKeysToAttend())
+		{
+			Key<Conference> key = Key.create(websafe);
+			attending.add(ofy().load().key(key).now());
+		}
+		return attending;
 	}
 }
