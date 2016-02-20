@@ -177,6 +177,7 @@ public class ConferenceApi {
     	return new ArrayList<Conference>(0);
     }
     
+
     @ApiMethod(
             name = "getConferencesFiltered",
             path = "getConferencesFiltered",
@@ -185,8 +186,10 @@ public class ConferenceApi {
     public List<Conference> getConferencesFiltered()
     {
     	Query query = ofy().load().type(Conference.class);
-        query = query.filter("city =", "London");
-        query = query.filter("topics =", "Web Technologies");
-        return query.list();
+    	query = query.filter("maxAttendees >",10);
+    	query = query.filter("city =", "London");
+    	query = query.filter("topics =", "Web Technologies");
+    	query = query.filter("month =", 1) .order("maxAttendees").order("name");
+    	return query.list();    
     }
 }
